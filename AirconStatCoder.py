@@ -1,0 +1,111 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Sun Jun 19 11:35:57 2022
+
+@author: Marco
+"""
+# class AirconStatCoder:
+COMMAND_EXTENSION_HOME_LEAVE_MODE_FAN_SPEED_AUTO = 0
+COMMAND_EXTENSION_HOME_LEAVE_MODE_FAN_SPEED_VOLUME1 = 3
+COMMAND_EXTENSION_HOME_LEAVE_MODE_FAN_SPEED_VOLUME2 = 5
+COMMAND_EXTENSION_HOME_LEAVE_MODE_FAN_SPEED_VOLUME3 = 7
+COMMAND_EXTENSION_HOME_LEAVE_MODE_FAN_SPEED_VOLUME4 = 14
+COMMAND_OPERATION_MODE2_OFF = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 0, 0, 0, 0, 0]
+COMMAND_OPERATION_MODE2_ON = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 144, 0, 0, 0, 0, 0]
+COMMAND_SELF_CLEAN_RESET_OFF = 0
+COMMAND_SELF_CLEAN_RESET_ON = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0]
+COMMAND_VACANT_PROPERTY_OFF = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+COMMAND_VACANT_PROPERTY_ON = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0]
+ELECTRIC_ENERGY_COFFICIENT = 0.25
+STATUS_EXTENSION_CODE_HOME_LEAVE_MODE = 248
+STATUS_EXTENSION_HOME_LEAVE_MODE_FAN_SPEED_AUTO = 0
+STATUS_EXTENSION_HOME_LEAVE_MODE_FAN_SPEED_VOLUME1 = 3
+STATUS_EXTENSION_HOME_LEAVE_MODE_FAN_SPEED_VOLUME2 = 5
+STATUS_EXTENSION_HOME_LEAVE_MODE_FAN_SPEED_VOLUME3 = 7
+STATUS_EXTENSION_HOME_LEAVE_MODE_FAN_SPEED_VOLUME4 = 14
+STATUS_EXTENSION_OP1_HOME_LEAVE_MODE_COMMAND = 0
+STATUS_EXTENSION_OP1_HOME_LEAVE_MODE_REQUEST = 255
+STATUS_EXTENSION_OP1_HOME_LEAVE_MODE_STATUS = 16
+STATUS_EXTENSION_OP2_HOME_LEAVE_MODE_FAN_SPEED_FOR_COOLING = 31
+STATUS_EXTENSION_OP2_HOME_LEAVE_MODE_FAN_SPEED_FOR_HEATING = 32
+STATUS_EXTENSION_OP2_HOME_LEAVE_MODE_TEMP_RULE_FOR_COOLING = 27
+STATUS_EXTENSION_OP2_HOME_LEAVE_MODE_TEMP_RULE_FOR_HEATING = 28
+STATUS_EXTENSION_OP2_HOME_LEAVE_MODE_TEMP_SETTING_FOR_COOLING = 29
+STATUS_EXTENSION_OP2_HOME_LEAVE_MODE_TEMP_SETTING_FOR_HEATING = 30
+STATUS_MODEL_NO_TYPE_GLOBAL_2022 = [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+STATUS_MODEL_NO_TYPE_HIGH_END_FOR_JAPANESE_2023 = [2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+STATUS_MODEL_NO_TYPE_MAX_BIT = [127, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+STATUS_MODEL_NO_TYPE_SEPARATE_2021 = 0
+STATUS_OPERATION_MODE2_MAX_BIT = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 0, 0]
+STATUS_OPERATION_MODE2_OFF = 0
+STATUS_OPERATION_MODE2_ON = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]
+STATUS_VACANT_PROPERTY_MAX_BIT = 0
+STATUS_VACANT_PROPERTY_OFF = 0
+STATUS_VACANT_PROPERTY_ON = 0
+TAG = "AirconStatCoder"
+af_n_00 = [0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+af_n_01 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+af_n_02 = [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+af_n_03 = [0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+af_n_04 = [0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+af_p_00 = [0, 0, 0, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+af_p_01 = [0, 0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+af_p_02 = [0, 0, 0, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+af_p_03 = [0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+af_p_04 = [0, 0, 0, 14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+as_n_of = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+as_n_on = [0, 0, 64, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+as_p_of = [0, 0, 128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+as_p_on = [0, 0, 192, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+av_n_of = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+av_n_on = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]
+av_p_of = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0]
+av_p_on = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0]
+command_init = [0, 0, 0, 0, 0, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+en_n_of = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+en_n_on = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0]
+en_p_of = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 0, 0]
+en_p_on = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, 0, 0]
+lh_n_01 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+lh_n_02 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]
+lh_n_03 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0]
+lh_n_04 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0]
+lh_n_05 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0]
+lh_n_06 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0]
+lh_n_07 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0]
+lh_p_01 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 0, 0, 0, 0, 0, 0]
+lh_p_02 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 0, 0, 0, 0, 0, 0]
+lh_p_03 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 0, 0, 0, 0, 0, 0]
+lh_p_04 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 0, 0, 0, 0, 0, 0]
+lh_p_05 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 0, 0, 0, 0, 0, 0]
+lh_p_06 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 0, 0, 0, 0, 0, 0]
+lh_p_07 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 22, 0, 0, 0, 0, 0, 0]
+lv_n_01 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+lv_n_02 = [0, 0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+lv_n_03 = [0, 0, 0, 32, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+lv_n_04 = [0, 0, 0, 48, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+lv_p_01 = [0, 0, 0, 128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+lv_p_02 = [0, 0, 0, 144, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+lv_p_03 = [0, 0, 0, 160, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+lv_p_04 = [0, 0, 0, 176, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+om_n_au = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+om_n_dn = [0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+om_n_jo = [0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+om_n_re = [0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+om_n_so = [0, 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+om_p_au = [0, 0, 32, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+om_p_dn = [0, 0, 48, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+om_p_jo = [0, 0, 36, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+om_p_re = [0, 0, 40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+om_p_so = [0, 0, 44, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+op_n_of = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+op_n_on = [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+op_p_of = [0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+op_p_on = [0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+receive_init = [0, 0, 0, 0, 0, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+tm_p_au = [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
+tm_p_no = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+zeros = 0
+
+    # def fromBase64(airconStat, str):
+    #     return byteToStat(airconStat, Base64.decode(str.replace("\n", ""), 0))

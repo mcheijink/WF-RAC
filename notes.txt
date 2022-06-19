@@ -1,0 +1,2 @@
+p008jp.p009co.mhi_mth.smartmair.responseTelegram.mapper.ResponseAirconMapper
+contains the response decoder

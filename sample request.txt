@@ -1,0 +1,60 @@
+POST /beaver/command/getAirconStat HTTP/1.1
+Host: 192.168.xx.xx:51443
+Content-Type: application/json; charset=utf-8
+Connection: keep-alive
+Proxy-Connection: keep-alive
+Accept: */*
+User-Agent: smartmair_app[1.2.118]
+Content-Length: 206
+Accept-Language: nl-NL,nl;q=0.9
+Accept-Encoding: gzip, deflate
+
+{
+    "apiVer": "1.0",
+    "command": "getAirconStat",
+    "contents": {
+        "airconId": "a043b0ae97b7"
+    },
+    "deviceId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+    "operatorId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+    "timestamp": 1655630398
+}
+
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Content-Length: 572
+
+{
+    "apiVer": "1.0",
+    "command": "getAirconStat",
+    "contents": {
+        "airconId": "a043b0ae97b7",
+        "airconStat": "AAeqrqT/AAAAAAAQCwAAAAAAAf////8RWoAECCYkjAAAiAAAAAEAAAAAAAOAIIz/gBCf/5QQVQCuFA==",
+        "autoHeating": 0,
+        "expires": 1655613672,
+        "firmType": "WF-RAC",
+        "highTemp": "AB",
+        "ledStat": 1,
+        "logStat": 0,
+        "lowTemp": "66",
+        "mcu": {
+            "firmVer": "123"
+        },
+        "numOfAccount": 2,
+        "remoteList": [
+            "",
+            "",
+            "",
+            ""
+        ],
+        "timezone": "Europe/Amsterdam",
+        "updatedBy": "local",
+        "wireless": {
+            "firmVer": "010"
+        }
+    },
+    "deviceId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+    "operatorId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+    "result": 0,
+    "timestamp": 1655630398
+}
