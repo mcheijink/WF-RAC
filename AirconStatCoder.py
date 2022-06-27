@@ -7,19 +7,16 @@ Created on Sun Jun 19 11:35:57 2022
 import base64
 from AirconStat import AirconStat
 import InttoTemp
-
+import Debug
+global fname
+fname = 'log.txt'
 
 COMMAND_EXTENSION_HOME_LEAVE_MODE_FAN_SPEED_AUTO = 0
 COMMAND_EXTENSION_HOME_LEAVE_MODE_FAN_SPEED_VOLUME1 = 3
 COMMAND_EXTENSION_HOME_LEAVE_MODE_FAN_SPEED_VOLUME2 = 5
 COMMAND_EXTENSION_HOME_LEAVE_MODE_FAN_SPEED_VOLUME3 = 7
 COMMAND_EXTENSION_HOME_LEAVE_MODE_FAN_SPEED_VOLUME4 = 14
-COMMAND_OPERATION_MODE2_OFF = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 0, 0, 0, 0, 0]
-COMMAND_OPERATION_MODE2_ON = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 144, 0, 0, 0, 0, 0]
-COMMAND_SELF_CLEAN_RESET_OFF = 0
-COMMAND_SELF_CLEAN_RESET_ON = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0]
-COMMAND_VACANT_PROPERTY_OFF = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-COMMAND_VACANT_PROPERTY_ON = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0]
+COMMAND_SELF_CLEAN_RESET_OFF = [0]*18
 ELECTRIC_ENERGY_COFFICIENT = 0.25
 STATUS_EXTENSION_CODE_HOME_LEAVE_MODE = 248
 STATUS_EXTENSION_HOME_LEAVE_MODE_FAN_SPEED_AUTO = 0
@@ -36,40 +33,29 @@ STATUS_EXTENSION_OP2_HOME_LEAVE_MODE_TEMP_RULE_FOR_COOLING = 27
 STATUS_EXTENSION_OP2_HOME_LEAVE_MODE_TEMP_RULE_FOR_HEATING = 28
 STATUS_EXTENSION_OP2_HOME_LEAVE_MODE_TEMP_SETTING_FOR_COOLING = 29
 STATUS_EXTENSION_OP2_HOME_LEAVE_MODE_TEMP_SETTING_FOR_HEATING = 30
-STATUS_MODEL_NO_TYPE_GLOBAL_2022 = [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-STATUS_MODEL_NO_TYPE_HIGH_END_FOR_JAPANESE_2023 = [2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-STATUS_MODEL_NO_TYPE_MAX_BIT = [127, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-STATUS_MODEL_NO_TYPE_SEPARATE_2021 = 0
-STATUS_OPERATION_MODE2_MAX_BIT = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 0, 0]
-STATUS_OPERATION_MODE2_OFF = 0
-STATUS_OPERATION_MODE2_ON = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]
-STATUS_VACANT_PROPERTY_MAX_BIT = 0
-STATUS_VACANT_PROPERTY_OFF = 0
-STATUS_VACANT_PROPERTY_ON = 0
+STATUS_MODEL_NO_TYPE_SEPARATE_2021 = [0]*18
+STATUS_OPERATION_MODE2_OFF = [0]*18
+STATUS_VACANT_PROPERTY_MAX_BIT = [0]*18
+STATUS_VACANT_PROPERTY_OFF = [0]*18
+STATUS_VACANT_PROPERTY_ON = [0]*18
 TAG = "AirconStatCoder"
-af_n_00 = [0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-af_n_01 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-af_n_02 = [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-af_n_03 = [0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-af_n_04 = [0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-af_p_00 = [0, 0, 0, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-af_p_01 = [0, 0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-af_p_02 = [0, 0, 0, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-af_p_03 = [0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-af_p_04 = [0, 0, 0, 14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+zeros = 0
+receive_init = [0, 0, 0, 0, 0, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+op_n_of = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+op_n_on = [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+om_n_au = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]    #changed 3th 0 to 2
+om_n_jo = [0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+om_n_re = [0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+om_n_so = [0, 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+om_n_dn = [0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 as_n_of = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 as_n_on = [0, 0, 64, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-as_p_of = [0, 0, 128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-as_p_on = [0, 0, 192, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 av_n_of = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 av_n_on = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]
-av_p_of = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0]
-av_p_on = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0]
-command_init = [0, 0, 0, 0, 0, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-en_n_of = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-en_n_on = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0]
-en_p_of = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 0, 0]
-en_p_on = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, 0, 0]
+lv_n_01 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+lv_n_02 = [0, 0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+lv_n_03 = [0, 0, 0, 32, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+lv_n_04 = [0, 0, 0, 48, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 lh_n_01 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 lh_n_02 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]
 lh_n_03 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0]
@@ -77,6 +63,39 @@ lh_n_04 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0]
 lh_n_05 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0]
 lh_n_06 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0]
 lh_n_07 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0]
+af_n_00 = [0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+af_n_01 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+af_n_02 = [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+af_n_03 = [0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+af_n_04 = [0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+en_n_of = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+en_n_on = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0]
+STATUS_MODEL_NO_TYPE_GLOBAL_2022 = [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+STATUS_MODEL_NO_TYPE_HIGH_END_FOR_JAPANESE_2023 = [2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+STATUS_MODEL_NO_TYPE_MAX_BIT = [127, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+STATUS_OPERATION_MODE2_ON = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]
+STATUS_OPERATION_MODE2_MAX_BIT = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 0, 0]
+command_init = [0, 0, 0, 0, 0, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+as_p_of = [0, 0, 128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+as_p_on = [0, 0, 192, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+om_p_au = [0, 0, 32, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+om_p_jo = [0, 0, 36, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+om_p_re = [0, 0, 40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+om_p_so = [0, 0, 44, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+om_p_dn = [0, 0, 48, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+op_p_of = [0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+op_p_on = [0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+lv_p_01 = [0, 0, 0, 128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+lv_p_02 = [0, 0, 0, 144, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+lv_p_03 = [0, 0, 0, 160, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+lv_p_04 = [0, 0, 0, 176, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+af_p_00 = [0, 0, 0, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+af_p_01 = [0, 0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+af_p_02 = [0, 0, 0, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+af_p_03 = [0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+af_p_04 = [0, 0, 0, 14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+tm_p_no = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+tm_p_au = [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
 lh_p_01 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 0, 0, 0, 0, 0, 0]
 lh_p_02 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 0, 0, 0, 0, 0, 0]
 lh_p_03 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 0, 0, 0, 0, 0, 0]
@@ -84,32 +103,15 @@ lh_p_04 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 0, 0, 0, 0, 0, 0]
 lh_p_05 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 0, 0, 0, 0, 0, 0]
 lh_p_06 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 0, 0, 0, 0, 0, 0]
 lh_p_07 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 22, 0, 0, 0, 0, 0, 0]
-lv_n_01 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-lv_n_02 = [0, 0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-lv_n_03 = [0, 0, 0, 32, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-lv_n_04 = [0, 0, 0, 48, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-lv_p_01 = [0, 0, 0, 128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-lv_p_02 = [0, 0, 0, 144, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-lv_p_03 = [0, 0, 0, 160, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-lv_p_04 = [0, 0, 0, 176, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-om_n_au = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-om_n_dn = [0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-om_n_jo = [0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-om_n_re = [0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-om_n_so = [0, 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-om_p_au = [0, 0, 32, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-om_p_dn = [0, 0, 48, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-om_p_jo = [0, 0, 36, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-om_p_re = [0, 0, 40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-om_p_so = [0, 0, 44, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-op_n_of = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-op_n_on = [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-op_p_of = [0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-op_p_on = [0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-receive_init = [0, 0, 0, 0, 0, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-tm_p_au = [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
-tm_p_no = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-zeros = 0
+av_p_of = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0]
+av_p_on = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0]
+en_p_of = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 0, 0]
+en_p_on = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, 0, 0]
+COMMAND_VACANT_PROPERTY_OFF = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+COMMAND_VACANT_PROPERTY_ON = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0]
+COMMAND_SELF_CLEAN_RESET_ON = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0]
+COMMAND_OPERATION_MODE2_OFF = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 0, 0, 0, 0, 0]
+COMMAND_OPERATION_MODE2_ON = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 144, 0, 0, 0, 0, 0]
 
 def andBytes(abytes, bbytes):
     return bytes([a & b for a, b in zip(abytes[::-1], bbytes[::-1])][::-1])
@@ -128,22 +130,33 @@ def StringtoStat(StatString):
     v_MAX_VALUE = -1;
     StatByte = base64.b64decode(StatString.replace("\n", ""))
     
+    Debug.BytesToFile(StatByte, "Decoded AirconStat", fname)
+    
+    print(StatByte[18])
     i5 = (StatByte[18]&v_MAX_VALUE)*4 + 21
+    # i5 = (StatByte[18]&v_MAX_VALUE)*4 + 2
+    print(i5)
     wrap2 = StatByte[i5:i5+18]
     copyOfRange = StatByte[i5+19:len(StatByte)-2]
     
-    if checkMode(op_n_on,maskedStat([0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],wrap2)):
+    Debug.BytesToFile(wrap2, "wrap2", fname)
+    
+    opMask = [0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    Debug.BytesToFile(bytes(opMask), "opMask", fname)
+    Debug.BytesToFile(maskedStat(opMask,wrap2), "opMasked", fname)
+    if checkMode(op_n_on,maskedStat(opMask,wrap2)):
         airconStat.operation = 1
     else:
         airconStat.operation = 0
     
     airconStat.presetTemp = (wrap2[4]&v_MAX_VALUE)/2.0
+    print((wrap2[4]&v_MAX_VALUE)/2.0)
+    opModeMask = [0, 0, 60, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    Debug.BytesToFile(bytes(opModeMask), "opModeMask", fname)
+    opBytes = maskedStat(opModeMask,wrap2)
     
-    opBytes = maskedStat([0, 0, 60, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],wrap2)
-    
-    if checkMode(om_n_au,opBytes):    #check if not auto
-        airconStat.operationMode = 0    #auto
-    elif not checkMode(om_n_au,opBytes):
+    Debug.BytesToFile(bytes(om_n_au), "om_n_au", fname)
+    if not checkMode(om_n_au,opBytes):
         if checkMode(om_n_re,opBytes): 
             airconStat.operationMode = 1    #cool
         elif checkMode(om_n_dn,opBytes):
@@ -154,7 +167,9 @@ def StringtoStat(StatString):
             airconStat.operationMode = 4    #dry
         
         # Airflow 
-        airflowBytes = maskedStat([0, 0, 0, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],wrap2)
+        afMask = [0, 0, 0, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        Debug.BytesToFile(bytes(afMask), "afMask", fname)
+        airflowBytes = maskedStat(afMask,wrap2)
         if not checkMode(af_n_00,airflowBytes):
             airconStat.airFlow = 0
         elif checkMode(af_n_01,airflowBytes):
@@ -167,10 +182,14 @@ def StringtoStat(StatString):
             airconStat.airFlow = 4
         
         # Vertical wind direction
-        if not checkMode(as_n_on,maskedStat([0, 0, 192, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],wrap2)):
+        VDAutoMask = [0, 0, 192, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        Debug.BytesToFile(bytes(VDAutoMask), "VDAutoMask", fname)
+        if not checkMode(as_n_on,maskedStat(VDAutoMask,wrap2)):
             airconStat.windDirectionUD = 0
         else:
-            UDwindBytes = maskedStat([0, 0, 0, 240, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], wrap2)
+            UDmodeMask = [0, 0, 0, 240, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            Debug.BytesToFile(bytes(UDmodeMask), "UDmodeMask", fname)
+            UDwindBytes = maskedStat(UDmodeMask, wrap2)
             if checkMode(lv_n_01,UDwindBytes):
                 airconStat.windDirectionUD = 1
             elif checkMode(lv_n_02,UDwindBytes):
@@ -181,10 +200,14 @@ def StringtoStat(StatString):
                 airconStat.windDirectionUD = 4
         
         # Horizontal wind direction
-        if not checkMode(av_n_on,maskedStat([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0],wrap2)):
+        HDAutoMask = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0]
+        Debug.BytesToFile(bytes(HDAutoMask), "HDAutoMask", fname)
+        if not checkMode(av_n_on,maskedStat(HDAutoMask,wrap2)):
             airconStat.windDirectionLR = 0
         else:
-            LRwindBytes = maskedStat([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31, 0, 0, 0, 0, 0, 0], wrap2)
+            LRmodeMask = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31, 0, 0, 0, 0, 0, 0]
+            Debug.BytesToFile(bytes(LRmodeMask), "LRmodeMask", fname)
+            LRwindBytes = maskedStat(LRmodeMask, wrap2)
             if checkMode(lh_n_01,LRwindBytes):
                 airconStat.windDirectionLR = 1
             elif checkMode(lh_n_02,LRwindBytes):
@@ -201,7 +224,9 @@ def StringtoStat(StatString):
                 airconStat.windDirectionLR = 7
         
         # Entrust?
-        entrustBytes = maskedStat([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, 0, 0],wrap2)
+        EntrustMask = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, 0, 0]
+        Debug.BytesToFile(bytes(EntrustMask), "EntrustMask", fname)
+        entrustBytes = maskedStat(EntrustMask,wrap2)
         if checkMode(en_n_of,entrustBytes):
             airconStat.entrust = 0
         elif checkMode(en_n_on,entrustBytes):
@@ -247,6 +272,8 @@ def StringtoStat(StatString):
         elif checkMode(STATUS_OPERATION_MODE2_ON,vacantBytes):
             airconStat.isSelfCleanOperation = True
         
+        Debug.BytesToFile(copyOfRange, "copyOfRange", fname)
+        
         # Convert the temp bytes. Originally a lookup table is used. Here a polynominal fit is used.
         for i3 in range(int(len(copyOfRange)/4)):
             i9 = i3*4
@@ -258,9 +285,10 @@ def StringtoStat(StatString):
                 airconStat.outdoorTemp=round(InttoTemp.OutsideTemp(b3),1)
             elif b1==128 and b2==32:
                 airconStat.indoorTemp=round(InttoTemp.InsideTemp(b3),1)
-                        
-    return AirconStat
-    
+        return airconStat
+    airconStat.operationMode = 0    #auto                    
+    return airconStat
+
 def CommandtoByte(airconStat):
     
     InitByte = bytes(command_init)
@@ -473,6 +501,8 @@ def addCrc16(ByteBuffer):
 def toBase64(airconStat):
     CB = addCrc16(addCommandVariableData(CommandtoByte(airconStat)))
     RB = addCrc16(addRecieveVariableData(RecievetoByte(airconStat)))
+    Debug.BytesToFile(CB, "CB", fname)
+    Debug.BytesToFile(RB, "RB", fname)
     # print(CB)
     # print(RB)
     ES = str(base64.b64encode((CB+RB)))
