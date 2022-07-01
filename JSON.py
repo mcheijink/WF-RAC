@@ -81,9 +81,35 @@ def getAirconStat():
     resp = requests.post(url=API_GET_AIRCON_STAT,json=data)
     return resp.json()
 
+def setAirconStat(AirconStatString):
+    treq = int(time.time())
+    contents = {'airconStat': AirconStatString,
+                'airconId' : airconID}
+    data = {
+        'contents' : contents,
+        'deviceId' : deviceID,
+        'timestamp' : treq,
+        'command' : COMMAND_SET_AIRCON_STAT,
+        'apiVer' : apiVer,
+        'operatorId' : operatorId
+    }
+    resp = requests.post(url=API_SET_AIRCON_STAT,json=data)
+    return resp.json()
+
 DeviceInfo = getDeviceInfo()
 airconId = DeviceInfo["contents"]["airconId"]
 
-JSAirconStat = getAirconStat()
+ACSstring = getAirconStat()["contents"]["airconStat"]
+ACS = AirconStatCoder.StringtoStat(ACSstring)
+print(ACSstring+"\n")
+PrintAirconStat.PrintAirconStat(ACS)
+ACS.airFlow = 4
 
-PrintAirconStat.PrintAirconStat(AirconStatCoder.StringtoStat(JSAirconStat["contents"]["airconStat"]))
+ACSstring = AirconStatCoder.toBase64(ACS)
+print(ACSstring+"\n")
+
+# ACSstring = setAirconStat(ACSstring)["contents"]["airconStat"]
+
+ACS = AirconStatCoder.StringtoStat(ACSstring)
+print(ACSstring+"\n")
+PrintAirconStat.PrintAirconStat(ACS)
