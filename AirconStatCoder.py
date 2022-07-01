@@ -132,10 +132,10 @@ def StringtoStat(StatString):
     
     Debug.BytesToFile(StatByte, "Decoded AirconStat", fname)
     
-    print(StatByte[18])
+    # print(StatByte[18])
     i5 = (StatByte[18]&v_MAX_VALUE)*4 + 21
     # i5 = (StatByte[18]&v_MAX_VALUE)*4 + 2
-    print(i5)
+    # print(i5)
     wrap2 = StatByte[i5:i5+18]
     copyOfRange = StatByte[i5+19:len(StatByte)-2]
     
@@ -150,143 +150,148 @@ def StringtoStat(StatString):
         airconStat.operation = 0
     
     airconStat.presetTemp = (wrap2[4]&v_MAX_VALUE)/2.0
-    print((wrap2[4]&v_MAX_VALUE)/2.0)
+    # print((wrap2[4]&v_MAX_VALUE)/2.0)
     opModeMask = [0, 0, 60, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     Debug.BytesToFile(bytes(opModeMask), "opModeMask", fname)
     opBytes = maskedStat(opModeMask,wrap2)
     
     Debug.BytesToFile(bytes(om_n_au), "om_n_au", fname)
-    if not checkMode(om_n_au,opBytes):
-        if checkMode(om_n_re,opBytes): 
-            airconStat.operationMode = 1    #cool
-        elif checkMode(om_n_dn,opBytes):
-            airconStat.operationMode = 2    #hot
-        elif checkMode(om_n_so,opBytes):
-            airconStat.operationMode = 3    #sendair
-        elif checkMode(om_n_jo,opBytes):
-            airconStat.operationMode = 4    #dry
-        
-        # Airflow 
-        afMask = [0, 0, 0, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-        Debug.BytesToFile(bytes(afMask), "afMask", fname)
-        airflowBytes = maskedStat(afMask,wrap2)
-        if not checkMode(af_n_00,airflowBytes):
-            airconStat.airFlow = 0
-        elif checkMode(af_n_01,airflowBytes):
-            airconStat.airFlow = 1
-        elif checkMode(af_n_02,airflowBytes):
-            airconStat.airFlow = 2
-        elif checkMode(af_n_03,airflowBytes):
-            airconStat.airFlow = 3        
-        elif checkMode(af_n_04,airflowBytes):
-            airconStat.airFlow = 4
-        
-        # Vertical wind direction
-        VDAutoMask = [0, 0, 192, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-        Debug.BytesToFile(bytes(VDAutoMask), "VDAutoMask", fname)
-        if not checkMode(as_n_on,maskedStat(VDAutoMask,wrap2)):
-            airconStat.windDirectionUD = 0
-        else:
-            UDmodeMask = [0, 0, 0, 240, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-            Debug.BytesToFile(bytes(UDmodeMask), "UDmodeMask", fname)
-            UDwindBytes = maskedStat(UDmodeMask, wrap2)
-            if checkMode(lv_n_01,UDwindBytes):
-                airconStat.windDirectionUD = 1
-            elif checkMode(lv_n_02,UDwindBytes):
-                airconStat.windDirectionUD = 2
-            elif checkMode(lv_n_03,UDwindBytes):
-                airconStat.windDirectionUD = 3
-            elif checkMode(lv_n_04,UDwindBytes):
-                airconStat.windDirectionUD = 4
-        
-        # Horizontal wind direction
-        HDAutoMask = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0]
-        Debug.BytesToFile(bytes(HDAutoMask), "HDAutoMask", fname)
-        if not checkMode(av_n_on,maskedStat(HDAutoMask,wrap2)):
-            airconStat.windDirectionLR = 0
-        else:
-            LRmodeMask = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31, 0, 0, 0, 0, 0, 0]
-            Debug.BytesToFile(bytes(LRmodeMask), "LRmodeMask", fname)
-            LRwindBytes = maskedStat(LRmodeMask, wrap2)
-            if checkMode(lh_n_01,LRwindBytes):
-                airconStat.windDirectionLR = 1
-            elif checkMode(lh_n_02,LRwindBytes):
-                airconStat.windDirectionLR = 2
-            elif checkMode(lh_n_03,LRwindBytes):
-                airconStat.windDirectionLR = 3
-            elif checkMode(lh_n_04,LRwindBytes):
-                airconStat.windDirectionLR = 4
-            elif checkMode(lh_n_05,LRwindBytes):
-                airconStat.windDirectionLR = 5
-            elif checkMode(lh_n_06,LRwindBytes):
-                airconStat.windDirectionLR = 6
-            elif checkMode(lh_n_07,LRwindBytes):
-                airconStat.windDirectionLR = 7
-        
-        # Entrust?
-        EntrustMask = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, 0, 0]
-        Debug.BytesToFile(bytes(EntrustMask), "EntrustMask", fname)
-        entrustBytes = maskedStat(EntrustMask,wrap2)
-        if checkMode(en_n_of,entrustBytes):
-            airconStat.entrust = 0
-        elif checkMode(en_n_on,entrustBytes):
-            airconStat.entrust = 1
-        
-        # Errorcode, TODO: checkif this will result in the correct error codes. Although it might not be that harmfull if it is implemented incorrectly.
-            # In java:
-            #     wrap3.position(6);
-            #     i2 = wrap3.get() & ByteCompanionObject.MAX_VALUE;
-            #     int i8 = 128;
-            #     if ((wrap3.get() & ByteCompanionObject.MIN_VALUE) <= 0) {
-            #         airconStat.setErrorCode("M".concat(String.format(Locale.US, "%02d", Integer.valueOf(i2))));
-            #     } else {
-            #         airconStat.setErrorCode("E".concat(String.valueOf(i2)));
-            #     }
-        i2 = wrap2[6]
-        if i2<=0: 
-            airconStat.errorCode = "M%s" % i2
-        else:
-            airconStat.errorCode = "E%s" % i2
-        if i2 == 0:
-            airconStat.errorCode = "00"
-        
-        # CoolHotJudge
-        if (wrap2[8]&8)<=0:
-            airconStat.coolHotJudge = 1
-        else:
-            airconStat.coolHotJudge = 0
-        
-        # ModelNo
-        modelBytes = maskedStat(STATUS_MODEL_NO_TYPE_MAX_BIT,wrap2)
-        if not checkMode(STATUS_MODEL_NO_TYPE_SEPARATE_2021,modelBytes):
-            airconStat.modelNo = 0
-        elif checkMode(STATUS_MODEL_NO_TYPE_GLOBAL_2022,modelBytes):
-            airconStat.modelNo = 1
-        elif checkMode(STATUS_MODEL_NO_TYPE_HIGH_END_FOR_JAPANESE_2023,modelBytes):
-            airconStat.modelNo = 2
-        
-        # Vacant
-        vacantBytes = maskedStat(STATUS_OPERATION_MODE2_MAX_BIT,wrap2)
-        if not checkMode(STATUS_OPERATION_MODE2_OFF,vacantBytes):
-            airconStat.isSelfCleanOperation = False
-        elif checkMode(STATUS_OPERATION_MODE2_ON,vacantBytes):
-            airconStat.isSelfCleanOperation = True
-        
-        Debug.BytesToFile(copyOfRange, "copyOfRange", fname)
-        
-        # Convert the temp bytes. Originally a lookup table is used. Here a polynominal fit is used.
-        for i3 in range(int(len(copyOfRange)/4)):
-            i9 = i3*4
-            b1 = copyOfRange[i9]
-            b2 = copyOfRange[i9+1]
-            b3 = copyOfRange[i9+2]
-            b4 = copyOfRange[i9+3]
-            if b1==128 and b2==16:
-                airconStat.outdoorTemp=round(InttoTemp.OutsideTemp(b3),1)
-            elif b1==128 and b2==32:
-                airconStat.indoorTemp=round(InttoTemp.InsideTemp(b3),1)
-        return airconStat
-    airconStat.operationMode = 0    #auto                    
+    if checkMode(om_n_au,opBytes):
+        airconStat.operationMode = 0    #auto                    
+    elif checkMode(om_n_re,opBytes): 
+        airconStat.operationMode = 1    #cool
+    elif checkMode(om_n_dn,opBytes):
+        airconStat.operationMode = 2    #hot
+    elif checkMode(om_n_so,opBytes):
+        airconStat.operationMode = 3    #sendair
+    elif checkMode(om_n_jo,opBytes):
+        airconStat.operationMode = 4    #dry
+    
+    # Airflow 
+    afMask = [0, 0, 0, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    Debug.BytesToFile(bytes(afMask), "afMask", fname)
+    airflowBytes = maskedStat(afMask,wrap2)
+    Debug.BytesToFile(airflowBytes, "afBytes", fname)
+    Debug.BytesToFile(bytes(af_n_00), "afBytes0", fname)
+    Debug.BytesToFile(bytes(af_n_01), "afBytes1", fname)
+    Debug.BytesToFile(bytes(af_n_02), "afBytes2", fname)
+    Debug.BytesToFile(bytes(af_n_03), "afBytes3", fname)
+    Debug.BytesToFile(bytes(af_n_04), "afBytes4", fname)
+    if checkMode(af_n_00,airflowBytes):
+        airconStat.airFlow = 0
+    elif checkMode(af_n_01,airflowBytes):
+        airconStat.airFlow = 1
+    elif checkMode(af_n_02,airflowBytes):
+        airconStat.airFlow = 2
+    elif checkMode(af_n_03,airflowBytes):
+        airconStat.airFlow = 3        
+    elif checkMode(af_n_04,airflowBytes):
+        airconStat.airFlow = 4
+    
+    # Vertical wind direction
+    VDAutoMask = [0, 0, 192, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    Debug.BytesToFile(bytes(VDAutoMask), "VDAutoMask", fname)
+    if checkMode(as_n_on,maskedStat(VDAutoMask,wrap2)):
+        airconStat.windDirectionUD = 0
+    else:
+        UDmodeMask = [0, 0, 0, 240, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        Debug.BytesToFile(bytes(UDmodeMask), "UDmodeMask", fname)
+        UDwindBytes = maskedStat(UDmodeMask, wrap2)
+        if checkMode(lv_n_01,UDwindBytes):
+            airconStat.windDirectionUD = 1
+        elif checkMode(lv_n_02,UDwindBytes):
+            airconStat.windDirectionUD = 2
+        elif checkMode(lv_n_03,UDwindBytes):
+            airconStat.windDirectionUD = 3
+        elif checkMode(lv_n_04,UDwindBytes):
+            airconStat.windDirectionUD = 4
+    
+    # Horizontal wind direction
+    HDAutoMask = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0]
+    Debug.BytesToFile(bytes(HDAutoMask), "HDAutoMask", fname)
+    if checkMode(av_n_on,maskedStat(HDAutoMask,wrap2)):
+        airconStat.windDirectionLR = 0
+    else:
+        LRmodeMask = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31, 0, 0, 0, 0, 0, 0]
+        Debug.BytesToFile(bytes(LRmodeMask), "LRmodeMask", fname)
+        LRwindBytes = maskedStat(LRmodeMask, wrap2)
+        if checkMode(lh_n_01,LRwindBytes):
+            airconStat.windDirectionLR = 1
+        elif checkMode(lh_n_02,LRwindBytes):
+            airconStat.windDirectionLR = 2
+        elif checkMode(lh_n_03,LRwindBytes):
+            airconStat.windDirectionLR = 3
+        elif checkMode(lh_n_04,LRwindBytes):
+            airconStat.windDirectionLR = 4
+        elif checkMode(lh_n_05,LRwindBytes):
+            airconStat.windDirectionLR = 5
+        elif checkMode(lh_n_06,LRwindBytes):
+            airconStat.windDirectionLR = 6
+        elif checkMode(lh_n_07,LRwindBytes):
+            airconStat.windDirectionLR = 7
+    
+    # Entrust?
+    EntrustMask = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, 0, 0]
+    Debug.BytesToFile(bytes(EntrustMask), "EntrustMask", fname)
+    entrustBytes = maskedStat(EntrustMask,wrap2)
+    if checkMode(en_n_of,entrustBytes):
+        airconStat.entrust = 0
+    elif checkMode(en_n_on,entrustBytes):
+        airconStat.entrust = 1
+    
+    # Errorcode, TODO: checkif this will result in the correct error codes. Although it might not be that harmfull if it is implemented incorrectly.
+        # In java:
+        #     wrap3.position(6);
+        #     i2 = wrap3.get() & ByteCompanionObject.MAX_VALUE;
+        #     int i8 = 128;
+        #     if ((wrap3.get() & ByteCompanionObject.MIN_VALUE) <= 0) {
+        #         airconStat.setErrorCode("M".concat(String.format(Locale.US, "%02d", Integer.valueOf(i2))));
+        #     } else {
+        #         airconStat.setErrorCode("E".concat(String.valueOf(i2)));
+        #     }
+    i2 = wrap2[6]
+    if i2<=0: 
+        airconStat.errorCode = "M%s" % i2
+    else:
+        airconStat.errorCode = "E%s" % i2
+    if i2 == 0:
+        airconStat.errorCode = "00"
+    
+    # CoolHotJudge
+    if (wrap2[8]&8)<=0:
+        airconStat.coolHotJudge = 1
+    else:
+        airconStat.coolHotJudge = 0
+    
+    # ModelNo
+    modelBytes = maskedStat(STATUS_MODEL_NO_TYPE_MAX_BIT,wrap2)
+    if not checkMode(STATUS_MODEL_NO_TYPE_SEPARATE_2021,modelBytes):
+        airconStat.modelNo = 0
+    elif checkMode(STATUS_MODEL_NO_TYPE_GLOBAL_2022,modelBytes):
+        airconStat.modelNo = 1
+    elif checkMode(STATUS_MODEL_NO_TYPE_HIGH_END_FOR_JAPANESE_2023,modelBytes):
+        airconStat.modelNo = 2
+    
+    # Vacant
+    vacantBytes = maskedStat(STATUS_OPERATION_MODE2_MAX_BIT,wrap2)
+    if not checkMode(STATUS_OPERATION_MODE2_OFF,vacantBytes):
+        airconStat.isSelfCleanOperation = False
+    elif checkMode(STATUS_OPERATION_MODE2_ON,vacantBytes):
+        airconStat.isSelfCleanOperation = True
+    
+    Debug.BytesToFile(copyOfRange, "copyOfRange", fname)
+    
+    # Convert the temp bytes. Originally a lookup table is used. Here a polynominal fit is used.
+    for i3 in range(int(len(copyOfRange)/4)):
+        i9 = i3*4
+        b1 = copyOfRange[i9]
+        b2 = copyOfRange[i9+1]
+        b3 = copyOfRange[i9+2]
+        b4 = copyOfRange[i9+3]
+        if b1==128 and b2==16:
+            airconStat.outdoorTemp=round(InttoTemp.OutsideTemp(b3),1)
+        elif b1==128 and b2==32:
+            airconStat.indoorTemp=round(InttoTemp.InsideTemp(b3),1)
     return airconStat
 
 def CommandtoByte(airconStat):
